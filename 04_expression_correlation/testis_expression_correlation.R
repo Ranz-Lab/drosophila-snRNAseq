@@ -45,17 +45,16 @@ get_correlation_plot <- function(seurat_obj, title_text) {
     theme(axis.text.x = element_text(angle = 60, hjust = 1))
 }
 
-ISO1 <- subset(testis, subset = strain == "ISO1")
 A4   <- subset(testis, subset = strain == "A4")
+ISO1 <- subset(testis, subset = strain == "ISO1")
 w501 <- subset(testis, subset = strain == "w501")
 
-get_correlation_plot(ISO1, "ISO1: Cell Type Correlation")
 get_correlation_plot(A4, "A4: Cell Type Correlation")
+get_correlation_plot(ISO1, "ISO1: Cell Type Correlation")
 get_correlation_plot(w501, "w501: Cell Type Correlation")
 
 # 1C. Cross-strain expression correlation matrix (filtered orthologs)
 genes_ISO1 <- read.csv("~/Desktop/Parse_analysis_v3/ISO1/DGE_unfiltered/all_genes.csv")$gene_name
-genes_A4   <- read.csv("~/Desktop/Parse_analysis_v3/A4/DGE_unfiltered/all_genes.csv")$gene_name
 genes_w501 <- read.csv("~/Desktop/Parse_analysis_v3/w501/DGE_unfiltered/all_genes.csv")$gene_name
 
 common_genes <- Reduce(intersect, list(genes_ISO1, genes_A4, genes_w501))
