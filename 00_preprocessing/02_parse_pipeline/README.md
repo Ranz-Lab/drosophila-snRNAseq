@@ -4,7 +4,7 @@ This folder contains scripts used to demultiplex and align Parse Biosciences WT_
 
 ## Demultiplexing
 
-Demultiplexing was performed by **strain**, using `fastq_sep_groups.py`. The sublibraries were processed individually and wells were grouped into three strains according to the layout defined in `01_parse_input_prep/sample_sheet.csv`.
+Demultiplexing was performed by **strain**, using Parse Biosciences' in-house script `fastq_sep_groups.py`. The sublibraries were processed individually and wells were grouped into three strains according to the layout defined in `01_parse_input_prep/sample_sheet.csv`.
 
 See `01_demultiplex_by_strain.sub` for the full script.
 
