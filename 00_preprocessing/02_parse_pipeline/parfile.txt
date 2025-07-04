@@ -1,0 +1,1 @@
+post_min_map_frac 0.01
