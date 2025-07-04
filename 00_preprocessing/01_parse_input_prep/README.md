@@ -15,7 +15,7 @@ The file `sample_sheet.csv` contains:
 
 ## NCBI Submission Format
 
-Raw FASTQ files were uploaded to NCBI in the format:
+Raw FASTQ files were demultiplexed by **sample** and uploaded to NCBI in the format:
 - 12 samples × 8 sublibraries = 96 FASTQ files for each R1 and R2
 - File Format: `split-fq-S1_A4_1o_R1.fastq.gz`, etc.
 
