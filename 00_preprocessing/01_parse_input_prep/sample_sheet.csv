@@ -1,0 +1,13 @@
+Sample_Name,Strain,Tissue,Replicate,Wells
+A4_sample1t,A4,Testis,1,B1-B4
+A4_sample2t,A4,Testis,2,D1-D4
+A4_sample1o,A4,Ovary,1,A1-A4
+A4_sample2o,A4,Ovary,2,B9-B12
+ISO1_sample3t,ISO1,Testis,1,B5-B8
+ISO1_sample4t,ISO1,Testis,2,C9-C12
+ISO1_sample3o,ISO1,Ovary,1,A5-A8
+ISO1_sample4o,ISO1,Ovary,2,C1-C4
+w501_sample5t,w501,Testis,1,D5-D8
+w501_sample6t,w501,Testis,2,D9-D12
+w501_sample5o,w501,Ovary,1,A9-A12
+w501_sample6o,w501,Ovary,2,C5-C8
