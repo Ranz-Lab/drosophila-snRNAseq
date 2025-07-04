@@ -10,7 +10,7 @@ For each strain, we:
 
 1. **Download and prepare genome FASTA and GTF files**  
 2. **Filter annotations to include only protein-coding genes**
-3. **Build references using the Parse `mkref` tool**
+3. **Build Parse-compatible references using `split-pipe --mode mkref`**
 4. **Use Liftoff to lift ISO1 annotations onto A4**
 
 ---
