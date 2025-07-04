@@ -5,8 +5,8 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 ## 📁 Repository Structure
 
 - `scripts/`: All analysis scripts, grouped by stage:
-  - `00_preprocessing_qc/`
-  - `01_clustering_annotation/`
+  - `00_preprocessing/`
+  - `01_cross_species_integration/`
   - `02_expression_correlation/`
   - `03_DE/`
   - `04_coexpression/`
