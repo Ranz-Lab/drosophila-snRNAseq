@@ -34,7 +34,7 @@ Each sample was used to construct a separate Seurat object, which was later merg
 
 ## Seurat Object Construction and Filtering
 
-Seurat v5 was used with R 4.3+ to generate objects for each tissue and strain via the `relaxed_seurat()` function. Separate Seurat objects were built for each of the 12 samples.
+Seurat v5 was used with R 4.3+ to generate objects for each tissue and strain via custom functions, `relaxed_seurat()` and `stringent_seurat()` for the testis and ovary samples respectively. Separate Seurat objects were built for each of the 12 samples.
 
 ### QC filtering criteria:
 
