@@ -30,6 +30,8 @@ For each sample (testis and ovary), we downloaded the following files from the P
 
 For *D. simulans* (w501), `all_genes.csv` was replaced by the ortholog-adjusted file `all_genes_orthologs.csv`.
 
+Each sample was used to construct a separate Seurat object, which was later merged by tissue (testis or ovary).
+
 ---
 
 ## Seurat Object Construction and Filtering
@@ -67,7 +69,7 @@ After filtering and doublet removal, NormalizeData was applied individually to e
 ## Merging and Integration with Harmony
 
 ### Merging:
-All six objects (ISO1/A4/w501 × testis/ovary) were merged into a single Seurat object using `merge()`. RNA expression data were joined using Seurat v5’s multilayer functionality in order to obtain a Seurat object each for the testis and ovary.
+All six objects (ISO1/A4/w501 × testis/ovary) were merged into a single Seurat object using `merge()`. RNA expression layers were preserved using Seurat v5’s multilayer architecture.
 
 ### Integration:
 Batch effects across strains were removed using `HarmonyIntegration` while preserving cross-species heterogeneity:
