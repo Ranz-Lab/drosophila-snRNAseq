@@ -16,7 +16,7 @@ source activate spipe
 
 # Common paths
 GENOME_DIR="/pub/ihariyan/ranz_lab/parse_analysis/analysis/3_round/w501_ASM75419v3.58/w501_ASM75419v3.58_ref"
-FQ_BASE="/pub/ihariyan/ranz_lab/data/single-cell/parse/combined"
+FQ_BASE="/pub/ihariyan/ranz_lab/data/single-cell/parse/data"
 OUT_BASE="/pub/ihariyan/ranz_lab/parse_analysis/analysis/3_round/w501_ASM75419v3.58"
 
 # Sample declarations (4 samples per sublibrary)
