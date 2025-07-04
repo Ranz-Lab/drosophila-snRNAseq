@@ -1,4 +1,4 @@
-# 00_prepare_references
+# 01_prepare_references
 
 This directory contains SLURM batch scripts for preparing genome references and annotations for the three *Drosophila* strains used in the study: *D. melanogaster* ISO1, *D. melanogaster* A4, and *D. simulans* w501. These references are used as input for the Parse Biosciences split-pipe alignment workflow.
 
