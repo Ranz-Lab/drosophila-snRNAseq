@@ -1,7 +1,11 @@
-### 03_pseudobulk
+# 03_pseudobulk
 
-5. `testis_pseudobulk.R`  
-6. `ovary_pseudobulk.R`  
+This directory contains scripts for pseudobulk analysis of single-nucleus RNA-seq data from *Drosophila* testis and ovary. This stage aggregates gene expression counts by cell type and sample to enable bulk-like comparisons across strains and plot a PCA.
+
+---
+
+###5. `testis_pseudobulk.R`  
+###6. `ovary_pseudobulk.R`  
 Generate pseudobulk expression matrices by aggregating counts across cell type–sample combinations, followed by PCA.
 
 **Uses:**
