@@ -14,8 +14,7 @@ The mapping was performed using the script:
 
 - `replace_gene_ortholog.py`: replaces gene IDs in `all_genes_w501.csv` with their *D. melanogaster* orthologs.
 
-**Important note:**
-- Gene IDs without known orthologs were retained to preserve species-specific expression profiles.
+**Important note:** Gene IDs without known orthologs were retained to preserve species-specific expression profiles.
 
 ---
 
