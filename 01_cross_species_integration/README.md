@@ -21,14 +21,14 @@ Because gene annotations differ between species, we first converted *D. simulans
   A two-column tab-delimited file containing ortholog mappings: Used to convert *D. simulans* gene IDs into *D. melanogaster* orthologs.
 
 - `replace_gene_ortholog.py`:  
-A Python script that:
-- Loads `mel-sim_orthologs.txt` into a dictionary
-- Replaces matching *D. simulans* gene names in `all_genes_w501.csv` with *D. melanogaster* orthologs
-- Retains genes without orthologs (species-specific or unannotated)
-- Writes to `all_genes_orthologs+original.csv`
-- Reports:
-  - Number of genes replaced with orthologs
-  - Number of genes not found in the ortholog list
+  A Python script that:
+  - Loads `mel-sim_orthologs.txt` into a dictionary
+  - Replaces matching *D. simulans* gene names in `all_genes_w501.csv` with *D. melanogaster* orthologs
+  - Retains genes without orthologs (species-specific or unannotated)
+  - Writes to `all_genes_orthologs+original.csv`
+  - Reports:
+    - Number of genes replaced with orthologs
+    - Number of genes not found in the ortholog list
 
 ---
 
