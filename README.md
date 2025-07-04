@@ -18,8 +18,6 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 | **6** | **`06_coexpression/`** | Co-expression network inference (placeholder) |
 | **7** | **`07_evolutionary_analysis/`** | Gene age, tissue-specificity (τ), Ka/Ks, etc. (placeholder) |
 
-> *Empty analysis folders already contain a short “Work-in-progress” README so the tree is clear.*
-
 ---
 
 ## 📁 Repository Structure
