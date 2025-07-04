@@ -23,6 +23,6 @@ Each file corresponds to a sublibrary–sample combination for one read directio
 
 ## Demultiplexing Strategy
 
-Demultiplexing was performed by **strain**, using `fastq_sep_groups.py`, grouping wells according to the layout shown in `sample_sheet.csv`. The script used for this can be found in `02_parse_pipeline/01_demultiplex_by_strain.sub`.
+For analysis purposes, demultiplexing was performed by **strain**, using `fastq_sep_groups.py`, grouping wells according to the layout shown in `sample_sheet.csv`. The script used for this can be found in `02_parse_pipeline/01_demultiplex_by_strain.sub`.
 
 To reproduce the analysis, combine FASTQs from the appropriate sublibraries by sample and strain using the well groupings defined in `sample_sheet.csv`.
