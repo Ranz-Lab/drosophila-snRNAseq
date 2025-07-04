@@ -13,16 +13,10 @@ library(ggrepel)
 ovary <- readRDS("~/FINAL-ovary-nounknown.rds")
 
 # Subset to only keep orthologs
-
-# Import gene names for all 3 strains
 A4_genes <- read.csv("~/Desktop/Parse_analysis_v3/A4/DGE_unfiltered/all_genes.csv")
 ISO1_genes <- read.csv("~/Desktop/Parse_analysis_v3/ISO1/DGE_unfiltered/all_genes.csv")
 w501_genes <- read.csv("~/Desktop/Parse_analysis_v3/w501/DGE_unfiltered/all_genes.csv")
-
-# Identify genes with data for all three strains
 common_gene_names <- Reduce(intersect, list(A4_genes$gene_name, ISO1_genes$gene_name, w501_genes$gene_name))
-
-# Subset the Seurat object to retain only these genes
 ovary <- subset(ovary, features=common_gene_names)
 
 # Extract counts and metadata
