@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#SBATCH --job-name=parse_align_ISO1
+#SBATCH -A JRANZ_LAB
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=96:00:00
+#SBATCH --error=%x.%A.err
+#SBATCH --output=%x.%A.out
+
+# Load Parse environment
+module load anaconda
+source activate spipe
+
+# Common paths
+GENOME_DIR="/pub/ihariyan/ranz_lab/parse_analysis/analysis/3_round/ISO1_BDGP6.46/ISO1_BDGP6.46"
+FQ_BASE="/pub/ihariyan/ranz_lab/data/single-cell/parse/data"
+OUT_BASE="/pub/ihariyan/ranz_lab/parse_analysis/analysis/3_round/ISO1_BDGP6.46"
+
+# Sample declarations (4 samples per sublibrary)
+SAMPLES="--sample ISO1_sample3t B5-B8 \
+         --sample ISO1_sample4t C9-C12 \
+         --sample ISO1_sample3o A5-A8 \
+         --sample ISO1_sample4o C1-C4"
+
+# Loop through sublibraries S1–S8
+for i in {1..8}; do
+  fq1="${FQ_BASE}/split-fq-S${i}_ISO1_R1.fastq.gz"
+  fq2="${FQ_BASE}/split-fq-S${i}_ISO1_R2.fastq.gz"
+  out_dir="${OUT_BASE}/S${i}_ISO1"
+
+  echo "Running Parse alignment for sublibrary S${i}..."
+
+  split-pipe --mode all \
+    --kit WT_mega \
+    --kit_score_skip \
+    --chemistry v2 \
+    --parfile parfile.txt \
+    --genome_dir "$GENOME_DIR" \
+    --fq1 "$fq1" \
+    --fq2 "$fq2" \
+    --output_dir "$out_dir" \
+    $SAMPLES
+done
