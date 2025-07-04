@@ -7,11 +7,12 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 - `00_preprocessing/`
 - `01_cross_species_integration/`
 - `02_annotation/`
-- `03_expression_correlation/`
-- `04_DE/`
-- `05_coexpression/`
-- `06_evolution/`
-- `07_pseudobulk/`
+- `03_pseudobulk/`
+- `04_expression_correlation/`
+- `05_DE/`
+- `06_coexpression/`
+- `07_evolutionary_analysis/`
+
 
 ## 📦 Data Access
 
