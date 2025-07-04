@@ -22,28 +22,6 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 ---
 
-## 🔧 Quick-Start (cluster users)
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/Ranz-Lab/drosophila-snRNAseq.git
-cd drosophila-snRNAseq
-
-# 2. Demultiplex raw FASTQs by strain  (edit paths in the SLURM script first)
-sbatch 00_preprocessing/00_demultiplexing/01_demultiplex_by_strain.sub
-
-# 3. Build references (only once per strain)
-sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_ISO1.sub
-sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_A4.sub
-sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_w501.sub
-
-# 4. Align each sub-library (A4 example)
-sbatch 00_preprocessing/02_parse_pipeline/01_parse_align_A4.sub
-
-# 5. Combine sub-libraries, then proceed to R scripts in 01_cross_species_integration/
-
----
-
 ## 📁 Repository Structure
 
 - `00_preprocessing/` — Reference preparation and Parse analysis pipeline  
