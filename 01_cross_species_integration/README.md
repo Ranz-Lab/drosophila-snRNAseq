@@ -67,7 +67,7 @@ After filtering and doublet removal, NormalizeData was applied individually to e
 ## Merging and Integration with Harmony
 
 ### Merging:
-All six objects (ISO1/A4/w501 × testis/ovary) were merged into a single Seurat object using `merge()`. RNA expression layers were preserved using Seurat v5’s multilayer architecture.
+For each tissue, the Seurat objects corresponding to the three strains were merged into a single object using merge(), while preserving RNA expression layers via Seurat v5’s multilayer architecture.
 
 ### Integration:
 Batch effects across strains were removed using `HarmonyIntegration` while preserving cross-species heterogeneity.
