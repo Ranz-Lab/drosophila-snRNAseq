@@ -22,4 +22,4 @@ Parse reference indices were generated earlier in the pipeline using `split-pipe
 
 ## Kit Version Note
 
-The Parse WT v2 (100k cell) kit was used for this experiment. As recommended by Parse Biosciences, the `--kit WT_mega` argument was used during demultiplexing and alignment to ensure compatibility with the updated barcode structure in v2 kits. This was critical for accurate parsing of sublibrary and well barcodes.
+The Parse WT v2 (100k nuclei) kit was used for this experiment. As recommended by Parse Biosciences, the `--kit WT_mega` argument was used during demultiplexing and alignment to ensure compatibility with the updated barcode structure in v2 kits. This was critical for accurate parsing of sublibrary and well barcodes.
