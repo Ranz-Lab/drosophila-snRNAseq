@@ -20,7 +20,7 @@ The mapping was performed using the script:
 
 ## Parse Digital Gene Expression Files Used
 
-For each sample (testis and ovary), we downloaded the following DGE files from the Parse Biosciences pipeline (unfiltered outputs):
+For each sample (testis and ovary), we downloaded the following unfiltered DGE files from the Parse Biosciences pipeline:
 
 - `count_matrix.mtx`
 - `cell_metadata.csv`
