@@ -16,14 +16,17 @@ testis <- readRDS("testis_normalized_nodoublets_integrated_unannotated_umap_tsne
 # ---------------------------------------
 
 # Marker gene expression visualization
-dotplot1 <- DotPlot(testis, features = c("His2Av","bam","aub","vas","nos","stg"),
-        split.by = "strain", cols = c("#C83658", "#3A8A00", "#0088C5"))) #Spermatogonia
-dotplot2 <- DotPlot(testis, features = c("bol","comr","topi","Rbp4","fzo","twe"),
-        split.by = "strain", cols = c("#C83658", "#3A8A00", "#0088C5"))) #Spermatocytes
-dotplot3 <- DotPlot(testis, features = c("Hsp23","Fas3","CadN", "Socs36E", "hh","rdo","eya","Egfr"),
-        split.by = "strain", cols = c("#C83658", "#3A8A00", "#0088C5"))) #Somatic cells
-dotplot4 <- DotPlot(testis, features = c("Dpy-30L2","sunz","whip","boly","soti","p-cup"),
-        split.by = "strain", cols = c("#C83658", "#3A8A00", "#0088C5"))) #Spermatids
+#Spermatogonia
+dotplot1 <- DotPlot(testis, features = c("His2Av","bam","aub","vas","nos","stg"), split.by="strain",cols=c("#C83658","#3A8A00","#0088C5")) 
+
+#Spermatocytes
+dotplot2 <- DotPlot(testis, features = c( "bol","comr","topi","Rbp4","fzo","twe"),cols=c("#C83658","#3A8A00","#0088C5"), split.by="strain") 
+
+#Somatic cells
+dotplot3 <- DotPlot(testis, features = c("Hsp23","Fas3","CadN", "Socs36E", "hh","rdo","eya","Egfr"),cols=c("#C83658","#3A8A00","#0088C5"), split.by="strain") 
+
+#Spermatids
+dotplot4 <- DotPlot(testis, features = c("Dpy-30L2","sunz","whip","boly","soti","p-cup"),cols=c("#C83658","#3A8A00","#0088C5"), split.by="strain") 
 
 # Combine dotplots
 combined_dotplot <- dotplot1 + dotplot2 + dotplot3 + dotplot4
