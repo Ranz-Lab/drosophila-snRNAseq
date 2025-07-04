@@ -1,4 +1,4 @@
-# Parse Demultiplexing and Alignment
+# 02_parse_pipeline
 
 This folder contains scripts used to demultiplex and align Parse Biosciences WT_v2 single-cell RNA-seq data across three Drosophila strains.
 
