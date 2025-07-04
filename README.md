@@ -6,8 +6,8 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 | Level | Folder | What it contains |
 |-------|--------|------------------|
-| **0** | **`00_preprocessing/`** | Data-handling steps that run **before** downstream R analysis  |
-|       |   ├── `00_demultiplexing/` | well layout (`sample_sheet.csv`) & SLURM script to split raw FASTQs by **strain** |
+| **0** | **`00_preprocessing/`** | Data-handling steps that run before downstream R analysis  |
+|       |   ├── `00_demultiplexing/` | well layout (`sample_sheet.csv`) & SLURM script to split raw FASTQs by strain |
 |       |   ├── `01_prepare_references/` | Liftoff annotation transfer, protein-coding filters, and `split-pipe --mode mkref` scripts |
 |       |   └── `02_parse_pipeline/` | SLURM jobs for Parse align (`01_parse_align_*`) and sublibrary combiner (`02_parse_combine_*`) |
 | **1** | **`01_cross_species_integration/`** | Ortholog mapping (w501 → Dmel), QC, doublet removal, normalization, Harmony integration |
