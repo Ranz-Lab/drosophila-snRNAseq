@@ -4,8 +4,8 @@ This directory contains scripts for pseudobulk analysis of single-nucleus RNA-se
 
 ---
 
-###5. `testis_pseudobulk.R`  
-###6. `ovary_pseudobulk.R`  
+### 5. `testis_pseudobulk.R`  
+### 6. `ovary_pseudobulk.R`  
 Generate pseudobulk expression matrices by aggregating counts across cell type–sample combinations, followed by PCA.
 
 **Uses:**
