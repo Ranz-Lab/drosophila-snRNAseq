@@ -8,7 +8,7 @@ library(ggplot2)
 library(dplyr)
 
 # Load object
-ovary <- readRDS("FINAL-ovary.rds")
+ovary <- readRDS("FINAL-ovary-nounknown.rds")
 
 # ---------------------------------------
 # Assign active identity to metadata
