@@ -12,9 +12,9 @@ See `01_demultiplex_by_strain.sub` for the full script.
 
 Each strain was aligned separately to its own strain-specific reference genome using `split-pipe --mode all`. The following scripts are included:
 
-- `02_parse_align_A4.sh`
-- `02_parse_align_ISO1.sh`
-- `02_parse_align_w501.sh`
+- `02_parse_align_A4.sub`
+- `02_parse_align_ISO1.sub`
+- `02_parse_align_w501.sub`
 
 Each script defines the appropriate input FASTQ directory (`--fq_dir`), reference index directory (`--ref_dir`), and output path.
 
