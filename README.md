@@ -4,16 +4,14 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 ## 📁 Repository Structure
 
-- `scripts/`: All analysis scripts, grouped by stage:
-  - `00_preprocessing/`
-  - `01_cross_species_integration/`
-  - `02_annotation_trajectory_analysis/`
-  - `03_expression_correlation/`
-  - `04_DE/`
-  - `05_coexpression/`
-  - `06_evolution/`
-  - `07_pseudobulk/`
-- `data/`: Placeholder with instructions to download raw data from NCBI.
+- `00_preprocessing/`
+- `01_cross_species_integration/`
+- `02_annotation_trajectory_analysis/`
+- `03_expression_correlation/`
+- `04_DE/`
+- `05_coexpression/`
+- `06_evolution/`
+- `07_pseudobulk/`
 
 ## 📦 Data Access
 
