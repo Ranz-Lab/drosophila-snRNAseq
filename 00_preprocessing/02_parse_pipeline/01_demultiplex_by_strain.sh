@@ -15,7 +15,7 @@ source activate spipe
 
 # Set paths
 SCRIPTPATH="/pub/ihariyan/ranz_lab/parse_analysis/ParseBiosciences-Pipeline.1.1.2/fastq_sep_groups.py"
-FQ_DIR="/dfs5/bio/ihariyan/ranz_lab/Parse/combined/"
+FQ_DIR="/dfs5/bio/ihariyan/ranz_lab/Parse/data/"
 OUT_DIR="/pub/ihariyan/ranz_lab/data/single-cell/parse/data/"
 
 # Define well groupings per strain
