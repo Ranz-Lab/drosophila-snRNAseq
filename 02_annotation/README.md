@@ -1,6 +1,6 @@
 # 02_annotation
 
-This directory contains scripts and outputs for cell type annotation and composition analysis of single-nucleus RNA-seq data from *Drosophila* testis and ovary. This stage defines biologically meaningful clusters, visualizes marker gene expression, and confirms cell type progression using trajectory inference. All steps were performed on Harmony-integrated Seurat objects from `01_cross_species_integration`.
+This directory contains scripts for cell type annotation and composition analysis of single-nucleus RNA-seq data from *Drosophila* testis and ovary. This stage defines biologically meaningful clusters, visualizes marker gene expression, and confirms cell type progression using trajectory inference. All steps were performed on Harmony-integrated Seurat objects from `01_cross_species_integration`.
 
 ---
 
