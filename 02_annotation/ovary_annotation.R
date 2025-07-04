@@ -79,7 +79,7 @@ saveRDS(ovary, file = "./ovary.rds")
 
 # Remove unannotated clusters for downstream analysis
 ovary <- subset(ovary, idents = "Unannotated", invert = TRUE)
-saveRDS(ovary, file = "./FINAL-ovary.rds")
+saveRDS(ovary, file = "./FINAL-ovary-nounknown.rds")
 
 # ---------------------------------------
 # Trajectory analysis - Monocle3
