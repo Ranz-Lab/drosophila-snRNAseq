@@ -6,7 +6,7 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 - `00_preprocessing/`
 - `01_cross_species_integration/`
-- `02_annotation_trajectory_analysis/`
+- `02_annotation/`
 - `03_expression_correlation/`
 - `04_DE/`
 - `05_coexpression/`
