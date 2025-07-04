@@ -1,12 +1,12 @@
 # 01_cross_species_integration
 
-This folder documents the process of harmonizing gene annotations across species, constructing strain-specific Seurat objects, and integrating testis single-nucleus RNA-seq data from *Drosophila melanogaster* and *Drosophila simulans* for comparative analysis.
+This folder documents the process of harmonizing gene annotations across species, constructing strain-specific Seurat objects, and integrating testis and ovary single-nucleus RNA-seq data from *Drosophila melanogaster* and *Drosophila simulans* for comparative analysis.
 
 ---
 
 ## Overview
 
-We analyzed testis nuclei from three Drosophila strains:
+We analyzed testis and ovary nuclei from three Drosophila strains:
 - *D. melanogaster* (ISO1 and A4)
 - *D. simulans* (w501)
 
