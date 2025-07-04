@@ -1,4 +1,4 @@
-# 01_parse_input_prep
+# 00_demultiplexing
 
 This folder contains metadata describing the structure of the raw input data before Parse Biosciences demultiplexing.
 
