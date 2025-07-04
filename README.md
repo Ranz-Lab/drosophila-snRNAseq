@@ -4,6 +4,48 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 ## 📁 Repository Structure
 
+| Level | Folder | What it contains |
+|-------|--------|------------------|
+| **0** | **`00_preprocessing/`** | Data-handling steps that run **before** downstream R analysis  |
+|       |   ├── `00_demultiplexing/` | well layout (`sample_sheet.csv`) & SLURM script to split raw FASTQs by **strain** |
+|       |   ├── `01_prepare_references/` | Liftoff annotation transfer, protein-coding filters, and `split-pipe --mode mkref` scripts |
+|       |   └── `02_parse_pipeline/` | SLURM jobs for Parse align (`01_parse_align_*`) and sublibrary combiner (`02_parse_combine_*`) |
+| **1** | **`01_cross_species_integration/`** | Ortholog mapping (w501 → Dmel), QC, doublet removal, normalization, Harmony integration |
+| **2** | **`02_annotation/`** | Marker-gene dot plots, manual cluster renaming, Monocle3 trajectories, cell-type composition |
+| **3** | **`03_pseudobulk/`** | Pseudobulk aggregation and QC (empty placeholder for now) |
+| **4** | **`04_expression_correlation/`** | Expression correlation across strains / cell types (placeholder) |
+| **5** | **`05_DE/`** | Differential-expression analyses (placeholder) |
+| **6** | **`06_coexpression/`** | Co-expression network inference (placeholder) |
+| **7** | **`07_evolutionary_analysis/`** | Gene age, tissue-specificity (τ), Ka/Ks, etc. (placeholder) |
+
+> *Empty analysis folders already contain a short “Work-in-progress” README so the tree is clear.*
+
+---
+
+## 🔧 Quick-Start (cluster users)
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/Ranz-Lab/drosophila-snRNAseq.git
+cd drosophila-snRNAseq
+
+# 2. Demultiplex raw FASTQs by strain  (edit paths in the SLURM script first)
+sbatch 00_preprocessing/00_demultiplexing/01_demultiplex_by_strain.sub
+
+# 3. Build references (only once per strain)
+sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_ISO1.sub
+sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_A4.sub
+sbatch 00_preprocessing/01_prepare_references/mkref_splitpipe_w501.sub
+
+# 4. Align each sub-library (A4 example)
+sbatch 00_preprocessing/02_parse_pipeline/01_parse_align_A4.sub
+
+# 5. Combine sub-libraries, then proceed to R scripts in 01_cross_species_integration/
+
+---
+
+## 📁 Repository Structure
+
 - `00_preprocessing/` — Reference preparation and Parse analysis pipeline  
 - `01_cross_species_integration/` — Ortholog mapping, normalization and integration
 - `02_annotation/` — Cell type annotation, trajectory inference, and cell type composition analysis  
