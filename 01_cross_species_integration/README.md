@@ -32,7 +32,7 @@ From the Parse Biosciences pipeline, we downloaded the following unfiltered file
 - `all_genes.csv`
 - `cell_metadata.csv`
 
-For *D. simulans* (w501), `all_genes.csv` was replaced with the ortholog-converted `all_genes_orthologs+original.csv` before processing.
+For *D. simulans* (w501), `all_genes.csv` was replaced with the ortholog-converted `all_genes_orthologs.csv` before processing.
 
 ---
 
