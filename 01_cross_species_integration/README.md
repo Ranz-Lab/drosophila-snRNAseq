@@ -1,89 +1,83 @@
 # 01_cross_species_integration
 
-This folder documents the process of harmonizing gene annotations across species, constructing strain-specific Seurat objects, and integrating testis and ovary single-nucleus RNA-seq data from *Drosophila melanogaster* and *Drosophila simulans* for comparative analysis.
+This directory contains scripts and metadata for processing and integrating single-nucleus RNA-seq data from the testis and ovary of three *Drosophila* strains—*D. melanogaster* (ISO1, A4) and *D. simulans* (w501). This stage harmonizes gene identifiers across species, constructs filtered Seurat objects for each tissue and strain, removes doublets, performs normalization, and integrates the datasets using Harmony.
 
 ---
 
-## Overview
+## Cross-Species Gene Mapping
 
-We analyzed testis and ovary nuclei from three Drosophila strains:
-- *D. melanogaster* (ISO1 and A4)
-- *D. simulans* (w501)
+To enable cross-species comparisons, *D. simulans* gene identifiers were converted to their *D. melanogaster* orthologs using:
 
-Because gene annotations differ between species, we first converted *D. simulans* gene IDs to their *D. melanogaster* orthologs using a curated mapping file. These standardized gene IDs enabled meaningful cross-species integration and downstream analyses. Importantly, any *D. simulans*-specific genes or those lacking ortholog mappings were retained.
+- `mel-sim_orthologs.txt`: a two-column tab-delimited file with `Dmel_gene_id <tab> Dsim_gene_id`.
 
----
+The mapping was performed using the script:
 
-## Gene ID Harmonization
+- `replace_gene_ortholog.py`: replaces gene IDs in `all_genes_w501.csv` with their *D. melanogaster* orthologs.
 
-### Files:
-- `mel-sim_orthologs.txt`:  
-  A two-column tab-delimited file containing ortholog mappings: Used to convert *D. simulans* gene IDs into *D. melanogaster* orthologs.
-
-- `replace_gene_ortholog.py`:  
-  A Python script that replaces matching *D. simulans* gene names in `all_genes_w501.csv` with *D. melanogaster* orthologs and retains genes without orthologs (species-specific or unannotated)
+**Important notes:**
+- Gene IDs without known orthologs were retained to preserve species-specific expression profiles.
+- Output file: `all_genes_orthologs.csv`.
 
 ---
 
-## Parse Biosciences DGE Input Files
+## Parse DGE Files Used
 
-From the Parse Biosciences pipeline, we downloaded the following unfiltered files for each sample:
+For each sample (testis and ovary), we downloaded the following files from the Parse Biosciences pipeline (unfiltered outputs):
+
 - `count_matrix.mtx`
-- `all_genes.csv`
 - `cell_metadata.csv`
+- `all_genes.csv`
 
-For *D. simulans* (w501), `all_genes.csv` was replaced with the ortholog-converted `all_genes_orthologs.csv` before processing.
+For *D. simulans* (w501), `all_genes.csv` was replaced by the ortholog-adjusted file `all_genes_orthologs.csv`.
 
 ---
 
-## Seurat Object Construction
+## Seurat Object Construction and Filtering
 
-Each strain’s Seurat object was created and processed using a standardized pipeline:
+Seurat v5 was used with R 4.3+ to generate objects for each tissue and strain via the `relaxed_seurat()` function. Separate Seurat objects were built for each of the 12 samples.
 
-### Key steps:
-1. Read count matrix, gene list, and metadata
-2. Apply stringent QC filters:
- - `nFeature_RNA ≥ 200`
- - `nCount_RNA between 300 and 100000`
- - `nFeature_RNA < 7500`
- - `percent.mt ≤ 5`
-3. Save violin plots for basic QC metrics
-4. Construct Seurat object with normalized and transposed count matrix
+### QC filtering criteria:
+
+- `nFeature_RNA ≥ 200`
+- `nCount_RNA ≥ 300 & ≤ 100000` (testis) and `nCount_RNA ≥ 500 & ≤ 100000` (ovary)
+- `nFeature_RNA < 7500`
+- `percent.mt ≤ 5%`
+
+Violin plots and scatter plots (feature counts, mitochondrial content) were visualized for all datasets.
 
 ---
 
 ## Doublet Detection and Removal
 
-Doublets were identified using the **DoubletFinder** package:
+DoubletFinder was used to detect and remove doublets from each tissue-strain combination. Key steps:
 
-- Each strain was analyzed independently
-- pK values were estimated using param sweeps
-- A 3% doublet rate was assumed
-- Homotypic doublet proportions were modeled using pre-cluster annotations
-- Only singlet cells were retained for downstream steps
-
----
-
-## Normalization and Individual UMAPs
-
-- Each strain was normalized using **SCTransform (v2)**  
-- PCA, clustering, and UMAP were computed and saved for each strain
-- UMAPs were used for pre-integration quality inspection
+- Identification of optimal `pK` via parameter sweep.
+- Expected doublet rate set to 3%.
+- Homotypic proportion estimated from unintegrated clusters.
+- Singlets were extracted based on `DF.classifications_*` and retained for downstream analysis.
 
 ---
 
-## Integration with Harmony
+## Normalization
 
-- All three testis datasets (ISO1, A4, w501) were merged using Seurat v5’s layer-aware `merge()`
-- Datasets were normalized, variable features selected, and scaled
-- PCA was computed followed by batch correction using **Harmony**
-- Final dimensionality reductions included:
-- UMAP (`umap.harmony`)
-- tSNE (`tsne.harmony`)
+After filtering and doublet removal, NormalizeData was applied individually to each Seurat object (testis and ovary for all three strains). PCA, variable feature selection, and scaling were also performed.
 
 ---
 
-## Output
+## Merging and Integration with Harmony
 
-Final integrated object: This file contains the integrated testis dataset across species and strains, ready for annotation, trajectory inference, and cross-species comparison.
+### Merging:
+All six objects (ISO1/A4/w501 × testis/ovary) were merged into a single Seurat object using `merge()`. RNA expression data were joined using Seurat v5’s multilayer functionality in order to obtain a Seurat object each for the testis and ovary.
+
+### Integration:
+Batch effects across strains were removed using `HarmonyIntegration` while preserving cross-species heterogeneity:
+
+- Original reduction: PCA
+- Integration reduction: `harmony`
+- Normalization method: `logNormalization`
+
+### Dimensionality Reduction:
+
+- UMAP: `umap.harmony`
+- t-SNE: `tsne.harmony`
 
