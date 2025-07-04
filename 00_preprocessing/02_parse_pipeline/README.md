@@ -10,7 +10,7 @@ See `01_demultiplex_by_strain.sub` for the full script.
 
 ## Alignment
 
-Each strain was aligned separately to its own strain-specific reference genome using `split-pipe --mode all`. The following scripts are included:
+Each strain was aligned separately to its own strain-specific reference genome using the Parse Biosciences pipeline, split-pipe v1.1.2, using `split-pipe --mode all`. The following scripts are included:
 
 - `02_parse_align_A4.sub`
 - `02_parse_align_ISO1.sub`
