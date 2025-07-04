@@ -1,6 +1,6 @@
 # drosophila-snRNAseq
 
-This repository contains all code used in the analysis of single-nucleus RNA-seq data from testis and ovary tissue of three Drosophila strains. The preprint for this study is available on *bioRxiv*.
+This repository contains all code used in the analysis of single-nucleus RNA-seq data from testis and ovary tissue of three *Drosophila* strains. The preprint for this study is available on *bioRxiv*.
 
 ## 📁 Repository Structure
 
