@@ -18,7 +18,7 @@ For each strain, we:
 ## Script Descriptions
 
 - `liftoff_annotation_A4.sub`: Maps ISO1 GTF annotations to the A4 genome using [Liftoff](https://github.com/agshumate/Liftoff)
-- `mkgtf_filter_protein_coding.sub`: Filters any GTF file to retain `gene_biotype == "protein_coding"` entries using Cell Ranger
+- `mkgtf_filter_protein_coding.sub`: Filters GTF file to retain `gene_biotype == "protein_coding"` entries using Cell Ranger
 - `mkref_splitpipe_ISO1.sub`: Builds the Parse reference for ISO1 from BDGP6.46
 - `mkref_splitpipe_A4.sub`: Uses Liftoff annotations and builds the A4 reference
 - `mkref_splitpipe_w501.sub`: Builds the Parse reference for *D. simulans* w501
