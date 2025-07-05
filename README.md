@@ -22,4 +22,4 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 
 ## 📦 Data Access
 
-Raw FASTQ files are available under NCBI BioProject [PRJNA1273697](https://www.ncbi.nlm.nih.gov/sra/PRJNA1273697).
+Raw FASTQ files are available under NCBI BioProject [PRJNA1273697](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1273697).
