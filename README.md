@@ -16,7 +16,6 @@ This repository contains all code used in the analysis of single-nucleus RNA-seq
 | **4** | **`04_expression_correlation/`** | Expression correlation across strains / cell types |
 | **5** | **`05_DE/`** | Differential expression analysis between species |
 | **6** | **`06_coexpression/`** | Co-expression network analysis and divergence between species |
-| **7** | **`07_evolutionary_analysis/`** | Gene age, tissue-specificity (τ), evolutionary rate, and chromosome expression analyses |
 
 ---
 
