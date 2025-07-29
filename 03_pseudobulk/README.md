@@ -4,8 +4,8 @@ This directory contains scripts for pseudobulk analysis of single-nucleus RNA-se
 
 ---
 
-### 5. `testis_pseudobulk.R`  
-### 6. `ovary_pseudobulk.R`  
+### `testis_pseudobulk.R`  
+### `ovary_pseudobulk.R`  
 Aggregate counts across cell type–sample combinations and perform PCA on normalized expression values.
 
 **Uses:**
