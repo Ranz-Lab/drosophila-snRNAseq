@@ -18,7 +18,7 @@ For both tissues (testis and ovary), we:
 
 ## Scripts Included
 
-### 1. `testis_annotation.R`
+### `testis_annotation.R`
 
 - Loads the integrated Seurat object (`testis.FINAL.collapsed.rds`)
 - Visualizes canonical markers (e.g., *bam*, *His2Av*, *Rbp4*, *Fas3*, etc.)
@@ -29,7 +29,7 @@ For both tissues (testis and ovary), we:
 - Excludes "Unannotated" clusters
 - Saves final annotated object ("FINAL-testis-nounknown.rds")
 
-### 2. `ovary_annotation.R`
+### `ovary_annotation.R`
 
 - Loads the integrated Seurat object (`ovary.annotated.v3.SCT.rds`)
 - Visualizes canonical markers (e.g., *corolla*, *orb*, *cas*, *Sox14*, *Act57B*)
@@ -56,8 +56,8 @@ This served as an internal consistency check to support the biological accuracy 
 
 ## Cell Type Composition
 
-### 3. `testis_celltype_composition.R`
-### 4. `ovary_celltype_composition.R`
+### `testis_celltype_composition.R`
+### `ovary_celltype_composition.R`
 
 - Quantify and visualize the distribution of annotated cell types across strains
 - Uses:
