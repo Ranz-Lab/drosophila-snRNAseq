@@ -19,14 +19,15 @@ library(hdWGCNA)
 # using the cowplot theme for ggplot
 theme_set(theme_cowplot())
 
-# set random seed for reproducibility
-set.seed(12345)
-
-# optionally enable multithreading
-enableWGCNAThreads(nThreads = 8)
-
 # load the testis snRNA-seq dataset
 testis <- readRDS("~/FINAL-testis-nounknown.rds")
+
+# rename GSC
+current_idents <- testis@active.ident
+levels(current_idents)[levels(current_idents) == "GSC / Early Spermatogonia"] <- "Early Spermatogonia"
+testis@active.ident <- current_idents
+testis@meta.data[["celltype"]] <- as.character(testis@meta.data[["celltype"]])
+testis@meta.data[["celltype"]][testis@meta.data[["celltype"]] == "GSC / Early Spermatogonia"] <- "Early Spermatogonia"
 
 # Import gene names for all 3 strains
 ISO1_genes <- read.csv("~/Desktop/Parse_analysis_v3/ISO1/DGE_unfiltered/all_genes.csv")
@@ -45,17 +46,17 @@ testis$species <- ifelse(testis$strain %in% c("A4", "ISO1"), "Dmel",
 seurat_obj <- testis
 
 # plot UMAP to check
-p <- DimPlot(seurat_obj, group.by='celltype', label=TRUE) +
-  umap_theme() + ggtitle('Testis of Drosophila melanogaster and simulans') + NoLegend()
+#p <- DimPlot(seurat_obj, group.by='celltype', label=TRUE) +
+ # umap_theme() + ggtitle('Testis of Drosophila melanogaster and simulans') + NoLegend()
 
-p
+#p
 
 # select genes
 seurat_obj <- SetupForWGCNA(
   seurat_obj,
   gene_select = "fraction", # the gene selection approach
   fraction = 0.05, # fraction of cells that a gene needs to be expressed in order to be included
-  wgcna_name = "run-4" # the name of the hdWGCNA experiment
+  wgcna_name = "realrun-1_testis" # the name of the hdWGCNA experiment
 )
 
 # construct metacells  in each group
@@ -72,271 +73,327 @@ seurat_obj <- MetacellsByGroups(
 # normalize metacell expression matrix:
 seurat_obj <- NormalizeMetacells(seurat_obj)
 
-# perform 
-seurat_obj <- SetDatExpr(
-  seurat_obj,
-  group_name = "Late Spermatocytes", # the name of the group of interest in the group.by column
-  group.by='celltype', # the metadata column containing the cell type info. This same column should have also been used in MetacellsByGroups
-  assay = 'RNA', # using RNA assay
-  slot = 'data' # using normalized data
-)
+# List of cell types
+set_columns <- c("Early Spermatogonia")
 
-# Test different soft powers:
-seurat_obj <- TestSoftPowers(
-  seurat_obj,
-  networkType = 'signed' # you can also use "unsigned" or "signed hybrid"
-)
+# Loop through each cell type
+for (cell_type in set_columns) {
+  
+  temp_obj <- seurat_obj
+  
+  # Setup WGCNA for the specific cell type
+  temp_obj <- SetDatExpr(
+    temp_obj,
+    group_name = cell_type,  # use the current cell type
+    group.by = 'celltype',   # the metadata column containing the cell type info
+    assay = 'RNA',           # using RNA assay
+    slot = 'data'            # using normalized data
+  )
+  
+  # Test different soft powers
+  temp_obj <- TestSoftPowers(
+    temp_obj,
+    networkType = 'signed'  # you can also use "unsigned" or "signed hybrid"
+  )
+  
+  # Plot soft power results
+  plot_list <- PlotSoftPowers(temp_obj)
+  
+  # Plot_list is a list, combine them into one plot
+  combined_plot <- wrap_plots(plot_list, ncol = 2)
+  
+  # Save the combined plot
+  ggsave(paste0("SoftPowers_testis_", cell_type, ".png"), combined_plot, width = 10, height = 6)
+  
+  # Construct coexpression network for the current cell type
+  temp_obj <- ConstructNetwork(
+    temp_obj,
+    tom_name = paste0(cell_type, '_network'), # dynamically name the TOM file
+    deepSplit = 4,
+    minModuleSize = 25,
+    overwrite_tom = TRUE
+  )
+  
+  # Plot dendrogram
+  PlotDendrogram(temp_obj, main = paste0(cell_type, ' Testis hdWGCNA Dendrogram'))
+  #ggsave(paste0("Dendrogram_testis_", cell_type, ".png"), dendro_plot, width=10, height=6)
+  
+  # Compute module eigengenes (MEs)
+  temp_obj <- ModuleEigengenes(
+    temp_obj,
+    group.by.vars="strain"  # Using strain as the grouping variable
+  )
+  
+  # Harmonized module eigengenes (hMEs)
+  hMEs <- GetMEs(temp_obj)
+  
+  # Module eigengenes (MEs)
+  MEs <- GetMEs(temp_obj, harmonized = FALSE)
+  
+  write.csv(hMEs, file = paste0("hMEs_testis_", cell_type, ".csv"))
+  write.csv(MEs, file = paste0("MEs_testis_", cell_type, ".csv"))
+  
+  # Compute eigengene-based connectivity (kME)
+  temp_obj <- ModuleConnectivity(
+    temp_obj,
+    group.by = 'celltype', 
+    group_name = cell_type
+  )
+  
+  # Reset module names with the cell type
+  temp_obj <- ResetModuleNames(
+    temp_obj,
+    new_name = paste0(cell_type, "-M")
+  )
+  
+  # Plot genes ranked by kME for each module
+  PlotKMEs(temp_obj, ncol = 3)
+  #ggsave(paste0("kME_plot_testis_", cell_type, ".png"), p, width=12, height=8)
+  
+  # get the module assignment table:
+  modules <- GetModules(temp_obj) %>% subset(module != 'grey')
+  write.csv(modules, file = paste0("modules_testis_", cell_type, ".csv"))  
+  
+  # get hub genes
+  hub_df <- GetHubGenes(temp_obj, n_hubs = 10)
+  write.csv(hub_df, file = paste0("hubgenes_testis_", cell_type, ".csv"))
+  
+  #Differential module eigenvalue analysis
+  groupa <- temp_obj@meta.data %>% subset(celltype == cell_type & strain == "ISO1") %>% rownames
+  groupb <- temp_obj@meta.data %>% subset(celltype == cell_type & strain == "A4") %>% rownames
+  groupc <- temp_obj@meta.data %>% subset(celltype == cell_type & strain == "w501") %>% rownames
+  
+  #ISO1 vs A4
+  DMEs_intra <- FindDMEs(
+    temp_obj,
+    barcodes1 = groupa,
+    barcodes2 = groupb,
+    test.use='wilcox',
+    wgcna_name='realrun-1_testis'
+  )
+  
+  #IS01 vs w501
+  DMEs_inter1 <- FindDMEs(
+    temp_obj,
+    barcodes1 = groupa,
+    barcodes2 = groupc,
+    test.use='wilcox',
+    wgcna_name='realrun-1_testis'
+  )
+  
+  #A4 vs w501
+  DMEs_inter2 <- FindDMEs(
+    temp_obj,
+    barcodes1 = groupb,
+    barcodes2 = groupc,
+    test.use='wilcox',
+    wgcna_name='realrun-1_testis'
+  )
+  
+  #Save DMEs
+  write.csv(DMEs_intra, file = paste0("DMEs_ISO1vsA4_testis_", cell_type, ".csv"))
+  write.csv(DMEs_inter1, file = paste0("DMEs_ISO1vsw501_testis_", cell_type, ".csv"))
+  write.csv(DMEs_inter2, file = paste0("DMEs_A4vsw501_testis_", cell_type, ".csv"))
+  
+  #Plot
+  PlotDMEsLollipop(
+    temp_obj, 
+    DMEs_intra, 
+    wgcna_name="realrun-1_testis",
+    pvalue = "p_val_adj"
+  )
+  
+  PlotDMEsLollipop(
+    temp_obj, 
+    DMEs_inter1, 
+    wgcna_name="realrun-1_testis", 
+    pvalue = "p_val_adj"
+  )
+  
+  PlotDMEsLollipop(
+    temp_obj, 
+    DMEs_inter2, 
+    wgcna_name="realrun-1_testis", 
+    pvalue = "p_val_adj"
+  )
+  
+  #Save plots
+  #ggsave(paste0("DMEs_ISO1vsA4_testis_", cell_type, ".png"), dmeplot1, width=12, height=8)  
+  #ggsave(paste0("DMEs_ISO1vsw501_testis_", cell_type, ".png"), dmeplot2, width=12, height=8)
+  #ggsave(paste0("DMEs_A4vsw501_testis_", cell_type, ".png"), dmeplot3, width=12, height=8)
 
-# plot the results:
-plot_list <- PlotSoftPowers(seurat_obj)
+  # Save the object for each cell type
+  saveRDS(temp_obj, file = paste0('hdWGCNA_testis_', cell_type, '_realrun-1.rds'))
+  
+}
 
-# assemble with patchwork
-wrap_plots(plot_list, ncol=2)
+#Dmel vs Dsim
 
-power_table <- GetPowerTable(seurat_obj)
-head(power_table)
+# List of cell types
+set_columns <- c("Epithelial Cells","Hub Cells","Cyst Cells","Early Spermatogonia","Late Spermatogonia","Early Spermatocytes","Mid Spermatocytes","Late Spermatocytes","Maturing Primary Spermatocytes", "Spermatids")
 
-# construct coexpression network
-seurat_obj <- ConstructNetwork(
-  seurat_obj,
-  tom_name = 'Late Spermatocytes3', # name of the topoligical overlap matrix written to disk
-  deepSplit = 4,
-  minModuleSize = 25
-)
+# Loop through each cell type
+# Loop through each cell type
+for (cell_type in set_columns) {
+  
+  rdsFile <- paste0('hdWGCNA_testis_', cell_type, '_realrun-1.rds')
+  
+  temp_obj <- readRDS(rdsFile)
+  
+  dmel <- temp_obj@meta.data %>% subset(celltype == cell_type & species == "Dmel") %>% rownames
+  dsim <- temp_obj@meta.data %>% subset(celltype == cell_type & species == "Dsim") %>% rownames
+  
+  DMEs_inter <- FindDMEs(
+    temp_obj,
+    barcodes1 = dmel,
+    barcodes2 = dsim,
+    test.use='wilcox',
+    min.pct=0.01,
+    wgcna_name='realrun-1_testis'
+  )
+  
+  DMEfigure <- PlotDMEsLollipop(
+    temp_obj, 
+    DMEs_inter, 
+    wgcna_name="realrun-1_testis", 
+    pvalue = "p_val_adj"
+  )
+  
+  ggsave(paste0("DMEs_DmelvsDsim_testis_", cell_type, ".jpeg"),
+         plot = last_plot(),
+         device = NULL,
+         path = NULL,
+         scale = 1,
+         width = NA,
+         height = NA,
+         units = c("in", "cm", "mm", "px"),
+         dpi = 300,
+         limitsize = TRUE,
+         bg = NULL)
+  
+  write.csv(DMEs_inter, file = paste0("DMEs_DmelvsDsim_testis_", cell_type, ".csv"))
+}
 
-# plot coexpression
-PlotDendrogram(seurat_obj, main='Late Spermatocytes hdWGCNA Dendrogram')
+#Enrichment Analysis
+# single-cell analysis package
+library(Seurat)
 
-# topoligcal overlap matrix - square matrix of genes by genes, where each value is the topoligcal overlap between the genes
-TOM <- GetTOM(seurat_obj)
+# plotting and data science packages
+library(tidyverse)
+library(cowplot)
+library(patchwork)
 
-# compute all MEs in the full single-cell dataset  to summarize the gene expression profile of an entire co-expression module
-seurat_obj <- ModuleEigengenes(
-  seurat_obj,
-  group.by.vars="strain"
-)
+# co-expression network analysis packages:
+library(WGCNA)
+library(hdWGCNA)
 
-# harmonized module eigengenes:
-hMEs <- GetMEs(seurat_obj)
+# enrichment packages
+library(clusterProfiler) 
+library(org.Dm.eg.db)
 
-# module eigengenes:
-MEs <- GetMEs(seurat_obj, harmonized=FALSE)
+# using the cowplot theme for ggplot
+theme_set(theme_cowplot())
 
-# compute eigengene-based connectivity (kME):
-seurat_obj <- ModuleConnectivity(
-  seurat_obj,
-  group.by = 'celltype', group_name = 'Late Spermatocytes'
-)
+# set random seed for reproducibility
+set.seed(12345)
 
-# rename the modules
-seurat_obj <- ResetModuleNames(
-  seurat_obj,
-  new_name = "Late Spermatocytes-M"
-)
+set_columns <- c("Epithelial Cells","Hub Cells","Cyst Cells","Early Spermatogonia","Late Spermatogonia","Early Spermatocytes","Mid Spermatocytes","Late Spermatocytes","Maturing Primary Spermatocytes", "Spermatids")
 
-# plot genes ranked by kME for each module
-p <- PlotKMEs(seurat_obj, ncol=3)
+for (cell_type in set_columns) {
+  rdsFile <- paste0('hdWGCNA_testis_', cell_type, '_realrun-1.rds')
+  
+  # load the seurat object
+  seurat_obj <- readRDS(rdsFile)
+  
+  # Run GO enrichment analysis using the modified function
+  seurat_obj <- RunGOClusterProfilertest(
+    seurat_obj, 
+    organism = "org.Dm.eg.db", # Specify organism database; adjust if needed
+    max_genes = 500            # Number of genes per module to test; use max_genes = Inf for all genes
+  )
+  
+  # retrieve the output table
+  enrich_df <- GetEnrichrTable(seurat_obj)
+  
+  # Save the enrichment table as a .csv file
+  output_table_file <- paste0("hdWGCNA_testis_GOenrichment_", cell_type, ".csv")
+  write.csv(enrich_df, output_table_file, row.names = FALSE)
+  
+  # make GO term plots:
+  ClusterProfilerDotPlot(
+    seurat_obj,
+    outdir = paste0('hdWGCNA_testis_clusterprofiler_plots', cell_type), # name of output directory
+    n_terms = 10, # number of enriched terms to show (sometimes more show if there are ties!!!)
+    plot_size = c(8,12), # width, height of the output .pdfs
+    logscale=TRUE # do you want to show the enrichment as a log scale?
+  )
+  
+  # comparison dotplot across all modules within cell type
+  dotplot <- ClusterProfilerComparisonPlot(
+    seurat_obj,
+    mods = "all", # use all modules (this is the default behavior)
+    ontology = "BP", # this has to be one of the lists we used above!!!
+    n_terms=2 # number of terms for each module
+  )
+  
+  #save the figure
+  ggsave(paste0("DmelvsDsim_testis_GOenrichment_dotplot_", cell_type, ".jpeg"),
+         plot = last_plot(),
+         device = NULL,
+         path = NULL,
+         scale = 1,
+         width = NA,
+         height = NA,
+         units = c("in", "cm", "mm", "px"),
+         dpi = 300,
+         limitsize = TRUE,
+         bg = NULL)
+}
 
-p
+##########################
+# Top Hub Genes GO Enrichment
 
-# get the module assignment table:
-modules <- GetModules(seurat_obj) %>% subset(module != 'grey')
+# Load required libraries
+library(clusterProfiler)
+library(org.Dm.eg.db)  
+library(dplyr)
 
-# show the first 6 columns:
-head(modules[,1:6])
+# Simple GO enrichment function
+SimpleGOEnrichment <- function(gene_symbols, organism_db = org.Dm.eg.db, p_cutoff = 0.05, q_cutoff = 0.2) {
+  # Convert gene symbols to Entrez IDs
+  mapped_genes <- bitr(gene_symbols, fromType = "SYMBOL", toType = "ENTREZID", OrgDb = organism_db)
+  
+  if (nrow(mapped_genes) == 0) {
+    stop("No genes could be mapped to Entrez IDs.")
+  }
+  
+  # Perform GO enrichment
+  ego <- enrichGO(
+    gene          = mapped_genes$ENTREZID,
+    OrgDb         = organism_db,
+    keyType       = "ENTREZID",
+    ont           = "ALL",  # options: "BP", "CC", "MF", or "ALL"
+    pAdjustMethod = "BH",
+    pvalueCutoff  = p_cutoff,
+    qvalueCutoff  = q_cutoff
+  )
+  
+  if (is.null(ego) || nrow(as.data.frame(ego)) == 0) {
+    message("No significant GO enrichment results found.")
+    return(NULL)
+  }
+  
+  return(as.data.frame(ego))
+}
 
-# get hub genes
-hub_df <- GetHubGenes(seurat_obj, n_hubs = 10)
+genes <- read.table("~/Desktop/top1%-hub-genes-testis.txt", quote="\"", comment.char="")
+gene_list <- as.character(genes$V1)
+go_results <- SimpleGOEnrichment(gene_list)
 
-head(hub_df)
+write.csv(go_results, "testis_hub_top1%_go_results.csv")
 
-saveRDS(seurat_obj, file='hdWGCNA_testis_latespermatocytes-run3.rds')
+genes <- read.table("~/Desktop/top10-hub-genes-testis.txt", quote="\"", comment.char="")
+gene_list <- as.character(genes$V1)
+go_results <- SimpleGOEnrichment(gene_list)
 
-##### VISUALIZATION #######
-
-# compute gene scoring for the top 25 hub genes by kME for each module
-# with UCell method
-library(UCell)
-seurat_obj <- ModuleExprScore(
-  seurat_obj,
-  n_genes = 25,
-  method='UCell'
-)
-
-# make a featureplot of hMEs for each module
-plot_list <- ModuleFeaturePlot(
-  seurat_obj,
-  reduction="umap.harmony",
-  features='hMEs', # plot the hMEs
-  order=TRUE # order so the points with highest hMEs are on top
-)
-
-# stitch together with patchwork
-wrap_plots(plot_list, ncol=3)
-
-# make a featureplot of hub scores for each module
-plot_list <- ModuleFeaturePlot(
-  seurat_obj,
-  reduction="umap.harmony",
-  features='scores', # plot the hub gene scores
-  order='shuffle', # order so cells are shuffled
-  ucell = TRUE # depending on Seurat vs UCell for gene scoring
-)
-
-# stitch together with patchwork
-wrap_plots(plot_list, ncol=3)
-
-# plot module correlagram
-ModuleCorrelogram(seurat_obj)
-
-# get hMEs from seurat object
-MEs <- GetMEs(seurat_obj, harmonized=TRUE)
-modules <- GetModules(seurat_obj)
-mods <- levels(modules$module); mods <- mods[mods != 'grey']
-
-# add hMEs to Seurat meta-data:
-seurat_obj@meta.data <- cbind(seurat_obj@meta.data, MEs)
-
-# plot with Seurat's DotPlot function
-p <- DotPlot(seurat_obj, features=mods, group.by = 'celltype')
-
-# flip the x/y axes, rotate the axis labels, and change color scheme:
-p <- p +
-  RotatedAxis() +
-  scale_color_gradient2(high='red', mid='grey95', low='blue')
-
-# plot output
-p
-
-# individual module network plots
-ModuleNetworkPlot(
-  seurat_obj,
-  outdir = 'ModuleNetworks'
-)
-
-ModuleNetworkPlot(
-  seurat_obj, 
-  outdir='ModuleNetworks2', # new folder name
-  n_inner = 20, # number of genes in inner ring
-  n_outer = 30, # number of genes in outer ring
-  n_conns = Inf, # show all of the connections
-  plot_size=c(10,10), # larger plotting area
-  vertex.label.cex=1 # font size
-)
-
-HubGeneNetworkPlot(
-  seurat_obj,
-  n_hubs = 3, n_other=5,
-  edge_prop = 0.75,
-  mods = 'all'
-)
-
-g <- HubGeneNetworkPlot(seurat_obj,  return_graph=TRUE)
-
-# get the list of modules:
-modules <- GetModules(seurat_obj)
-mods <- levels(modules$module); mods <- mods[mods != 'grey']
-
-# hubgene network
-HubGeneNetworkPlot(
-  seurat_obj,
-  n_hubs = 10, n_other=20,
-  edge_prop = 0.75,
-  mods = mods[1:2] # only select 2 modules
-)
-
-# umap 
-seurat_obj <- RunModuleUMAP(
-  seurat_obj,
-  n_hubs = 10, # number of hub genes to include for the UMAP embedding
-  n_neighbors=15, # neighbors parameter for UMAP
-  min_dist=0.1 # min distance between points in UMAP space
-)
-
-# get the hub gene UMAP table from the seurat object
-umap_df <- GetModuleUMAP(seurat_obj)
-
-# plot with ggplot
-ggplot(umap_df, aes(x=UMAP1, y=UMAP2)) +
-  geom_point(
-    color=umap_df$color, # color each point by WGCNA module
-    size=umap_df$kME*2 # size of each point based on intramodular connectivity
-  ) +
-  umap_theme()
-
-ModuleUMAPPlot(
-  seurat_obj,
-  edge.alpha=0.25,
-  sample_edges=TRUE,
-  edge_prop=0.1, # proportion of edges to sample (20% here)
-  label_hubs=2 ,# how many hub genes to plot per module?
-  keep_grey_edges=FALSE
-)
-
-g <- ModuleUMAPPlot(seurat_obj,  return_graph=TRUE)
-
-##### DIFFERENTIAL EIGENVALUE #######
-
-#Intraspecific
-
-groupa <- seurat_obj@meta.data %>% subset(celltype == 'Late Spermatocytes' & strain == "ISO1") %>% rownames
-groupb <- seurat_obj@meta.data %>% subset(celltype == 'Late Spermatocytes' & strain == "A4") %>% rownames
-
-head(groupa)
-
-DMEs <- FindDMEs(
-  seurat_obj,
-  barcodes1 = groupa,
-  barcodes2 = groupb,
-  test.use='wilcox',
-  wgcna_name='run-3'
-)
-
-head(DMEs)
-
-PlotDMEsLollipop(
-  seurat_obj, 
-  DMEs, 
-  wgcna_name='run-3', 
-  pvalue = "p_val_adj"
-)
-
-PlotDMEsVolcano(
-  seurat_obj,
-  DMEs,
-  wgcna_name = 'run-3'
-)
-
-
-#Interspecific
-
-seurat_obj$species <- ifelse(seurat_obj$strain %in% c("A4", "ISO1"), "Dmel", 
-                             ifelse(seurat_obj$strain == "w501", "Dsim", "Unknown"))
-
-group1 <- seurat_obj@meta.data %>% subset(celltype == 'Late Spermatocytes' & species == "Dmel") %>% rownames
-group2 <- seurat_obj@meta.data %>% subset(celltype == 'Late Spermatocytes' & species == "Dsim") %>% rownames
-
-head(group1)
-
-DMEs <- FindDMEs(
-  seurat_obj,
-  barcodes1 = group1,
-  barcodes2 = group2,
-  test.use='wilcox',
-  wgcna_name='run-3'
-)
-
-head(DMEs)
-
-PlotDMEsLollipop(
-  seurat_obj, 
-  DMEs, 
-  wgcna_name='run-3', 
-  pvalue = "p_val_adj"
-)
-
-PlotDMEsVolcano(
-  seurat_obj,
-  DMEs,
-  wgcna_name = 'run-3'
-)
+write.csv(go_results, "testis_hub_top10_go_results.csv")
