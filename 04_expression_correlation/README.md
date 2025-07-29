@@ -4,8 +4,8 @@ This directory contains scripts to assess transcriptomic similarity across cell 
 
 ---
 
-### 7. `testis_expression_correlation.R`  
-### 8. `ovary_expression_correlation.R`  
+### `testis_expression_correlation.R`  
+### `ovary_expression_correlation.R`  
 Calculate correlation matrices of average expression values to quantify cross-strain similarity for each annotated cell type. Filtering is used to reduce the impact of outliers, and cell types with low gene coverage are excluded.
 
 **Uses:**
